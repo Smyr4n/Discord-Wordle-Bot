@@ -6,6 +6,8 @@ import os
 from discord import app_commands
 from dotenv import load_dotenv
 
+#-----------------------------------------------
+
 # Initialize Discord Bot Configurations
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -15,9 +17,14 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-guilds = [
-    discord.Object(GUILD_ID_1)
-]
+# Initialize Discord Guilds
+guilds = []
+
+with open('guilds.json', 'r') as file:
+    guild_ids = json.load(file)
+
+for guild_id in guild_ids:
+    guilds.append(discord.Object(guild_id))
 
 # Initialize Logging Configurations
 logging.basicConfig(
@@ -29,6 +36,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.DEBUG
 )
+
+#-----------------------------------------------
 
 CURRENT_WORD: str = None
 REMAINING_TRIES: int
