@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 GUILD_ID_1 = os.getenv("GUILD_ID_1")
-GUILD_ID_2 = os.getenv("GUILD_ID_2")
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
@@ -36,8 +35,8 @@ REMAINING_TRIES: int
 
 @client.event
 async def on_ready() -> None:
-    logging.info(f'{client.user} has connected to Discord.')
-    logging.info('Close the terminal to disconnect Wordle Bot.') 
+    logging.info(f"{client.user} has connected to Discord.")
+    logging.info(f"Close the terminal to disconnect {client.user}.") 
 
 
 @app_commands.checks.has_permissions(administrator=True)
@@ -47,28 +46,36 @@ async def Sync(interaction: discord.Interaction) -> None:
     user: str = interaction.user.display_name
     logging.debug(f"Received SYNC command by {user}.")
 
-    embed: discord.Embed = discord.Embed(
-        title = "Syncing Commands...",
-        description = f"Total Guilds: {len(guilds)}",
-        color = discord.Color.yellow()
-    )
+    try:
 
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+        embed: discord.Embed = discord.Embed(
+            title = "Syncing Commands...",
+            description = f"Total Guilds: {len(guilds)}",
+            color = discord.Color.yellow()
+        )
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        
+        # Begin syncing and update status to user
+        for index, guild in enumerate(guilds):
+
+            embed.add_field(name=guild.id, value="In Progress...")
+            await interaction.edit_original_response(embed=embed)
+            logging.debug(f"Syncing Guild: {guild.id}")
+
+            await tree.sync(guild=guild)
+
+            embed.set_field_at(index=index, name=guild.id, value="Synced!")
+            await interaction.edit_original_response(embed=embed)
+            logging.debug(f"Finished Syncing Guild: {guild.id}")
+
+        # Update status when complete
+        embed.set_footer(text="Syncing Complete!")
+        await interaction.edit_original_response(embed=embed)
+
+    except Exception as Ex:
+        logging.error(Ex)
     
-    # Begin syncing and update status to user
-    for index, guild in enumerate(guilds):
-
-        embed.add_field(name=guild.id, value="In Progress...")
-        await interaction.edit_original_response(embed=embed)
-
-        await tree.sync(guild=guild)
-
-        embed.set_field_at(index=index, name=guild.id, value="Synced!")
-        await interaction.edit_original_response(embed=embed)
-
-    # Update status when complete
-    embed.set_footer(text="Syncing Complete!")
-    await interaction.edit_original_response(embed=embed)
     logging.debug(f"Completed SYNC command by {user}.")
 
 
@@ -95,6 +102,7 @@ async def StartGame(interaction: discord.Interaction) -> None:
         random_index = random.randint(0, len(words) - 1)
         CURRENT_WORD = words[random_index].lower()
         REMAINING_TRIES = 6
+        logging.info(f"Creating new Wordle game using: {CURRENT_WORD}")
 
         embed: discord.Embed = discord.Embed(
             title = "A new Wordle game has been created!",
@@ -118,7 +126,6 @@ async def Guess(interaction: discord.Interaction, attempt: str) -> None:
 
     global CURRENT_WORD
     global REMAINING_TRIES
-    attempt = attempt.lower()
 
     try:
 
@@ -134,7 +141,7 @@ async def Guess(interaction: discord.Interaction, attempt: str) -> None:
             logging.debug(f"Cancelled GUESS command by {user}. Reason: Invalid guess input.")
             return
 
-        attempt = list(attempt)
+        attempt = list(attempt.lower())
         response: list[str] = ["", "", "", "", ""]
 
         for i in range(5):
@@ -165,20 +172,21 @@ async def Guess(interaction: discord.Interaction, attempt: str) -> None:
         # If the answer is correct
         if response == [":green_square:"] * 5:
 
-            logging.debug(f"{user} has guessed the word!")
+            logging.info(f"{user} has guessed the word!")
             embed.set_footer(text=f"{user} has guessed the word!")
             CURRENT_WORD = None
 
         # If there are no more tries
         elif REMAINING_TRIES == 0:
 
-            logging.debug(f"Ran out of attempts! The game is lost.")
+            logging.info(f"Ran out of attempts! The game is lost.")
             embed.set_footer(text=f"Ran out of attempts! The word was: {CURRENT_WORD}")
             CURRENT_WORD = None
 
         else:
 
-            embed.set_footer(text=f"Guesses Remaining: {REMAINING_TRIES}")
+            logging.info(f"Remaining Guesses: {REMAINING_TRIES}")
+            embed.set_footer(text=f"Remaining Guesses: {REMAINING_TRIES}")
 
         await interaction.response.send_message(embed=embed)
 
