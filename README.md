@@ -1,4 +1,4 @@
-# Project Overview
+# Project Overview 📎
 
 This project is a bot application for use with the platform Discord.
 
@@ -44,3 +44,11 @@ Additionally, the program creates a wordlebot.log during runtime to help debug i
 ![guess example2](images/guess2.png)
 
 ---
+
+## Developer Usage 💻
+
+### Copyright: 
+- This code may be used for commercial or personal use, as long as the author is credited.
+
+### Other Notes:
+- This code uses an unpublished .env file to store important information, such as the Discord Bot Token. If you are using this script as reference, make sure to create your own .env file with your own Bot Token in it, or simply replace the .env usages with a constant.
