@@ -44,6 +44,9 @@ REMAINING_TRIES: int
 
 @client.event
 async def on_ready() -> None:
+    """
+    Called when the Discord bot is ready to be used.
+    """
     logging.info(f"{client.user} has connected to Discord.")
     logging.info(f"Close the terminal to disconnect {client.user}.") 
 
@@ -51,6 +54,14 @@ async def on_ready() -> None:
 @app_commands.checks.has_permissions(administrator=True)
 @tree.command(name="sync", description="Syncs Wordle Bot Commands. Must have administrator permission to use.", guilds=guilds)
 async def Sync(interaction: discord.Interaction) -> None:
+    """
+    Syncs the commands in the script to Discord's servers.
+
+    This must be run through Discord after any code changes have been made.
+
+    Args:
+        interaction (discord.Interaction): The connection between the bot and the user.
+    """
 
     user: str = interaction.user.display_name
     logging.debug(f"Received SYNC command by {user}.")
@@ -90,6 +101,14 @@ async def Sync(interaction: discord.Interaction) -> None:
 
 @tree.command(name="startgame", description="Starts a new Wordle game.", guilds=guilds)
 async def StartGame(interaction: discord.Interaction) -> None:
+    """
+    Processes a '/startgame' command in Discord.
+
+    This function chooses a random word from the words.json file and creates a new Wordle game.
+
+    Args:
+        interaction (discord.Interaction): The connection between the bot and the user.
+    """
 
     user: str = interaction.user.display_name
     logging.debug(f"Received STARTGAME command by {user}.")
@@ -129,6 +148,19 @@ async def StartGame(interaction: discord.Interaction) -> None:
 
 @tree.command(name="guess", description="Submits a Wordle guess.", guilds=guilds)
 async def Guess(interaction: discord.Interaction, attempt: str) -> None:
+    """
+    Processes a '/guess' command in Discord.
+
+    This function checks the user's guess and uses emojis to display feedback.
+
+    If the guess is correct, the game displays the winner. Otherwise, the amount of remaining tries is decremented.
+
+    If there are no more remaining tries, the game ends in a loss.
+
+    Args:
+        interaction (discord.Interaction): The connection between the bot and the user.
+        attempt (str): The user's Wordle guess.
+    """
 
     user: str = interaction.user.display_name
     logging.debug(f"Received GUESS command by {user}.")
