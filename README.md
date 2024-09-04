@@ -50,10 +50,7 @@ Additionally, the program creates a wordlebot.log during runtime to help debug i
 ### Dependencies:
 - Discord.py
 - Python-DotEnv (If using .env files)
-- Guilds.json File (Containing Guild IDs)
+- Guilds.json File (See guilds.json file for example format)
 
 ### Copyright: 
 - This code may be used for commercial or personal use, as long as the author is credited.
-
-### Other Notes:
-- Since the commands are not synced globally, any guilds (servers) you wish to use your bot on needs to have its guild id loaded in a guilds.json file.
