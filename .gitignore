@@ -1,4 +1,4 @@
 /.env
 /wordlebot.log
 /.venv
-/guilds.json
+guilds.json
