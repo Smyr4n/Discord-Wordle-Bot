@@ -47,9 +47,13 @@ Additionally, the program creates a wordlebot.log during runtime to help debug i
 
 ## Developer Usage 💻
 
+### Dependencies:
+- Discord.py
+- Python-DotEnv (If using .env files)
+- Guilds.json File (Containing Guild IDs)
+
 ### Copyright: 
 - This code may be used for commercial or personal use, as long as the author is credited.
 
 ### Other Notes:
-- This code uses an unpublished .env file to store the Discord Bot Token. If you are using this script as reference, make sure to create your own .env file with your own Bot Token in it, or simply replace the .env usages with a constant.
 - Since the commands are not synced globally, any guilds (servers) you wish to use your bot on needs to have its guild id loaded in the guilds.json file.
